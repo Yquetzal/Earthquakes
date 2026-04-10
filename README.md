@@ -7,22 +7,15 @@ Instead of analyzing individual events directly, the method first groups events 
 ## 2. Spatial Clustering
 Earthquakes are clustered using **HDBSCAN** on geographic coordinates (`latitude`, `longitude`).
 
-In the core pipeline (`utils.py`), default parameters are:
-- `min_cluster_size = 10`
-- `min_samples = 3`
-
 HDBSCAN labels outliers as `-1` (noise). These noise points are excluded from inter-cluster graph inference.
 
-In the interactive workflow (`interactive.py`), a stricter configuration is used:
+### Configuration
 - `min_cluster_size = 20`
 - `min_samples = 5`
 - clusters with fewer than `12` events are removed
 
 ## 3. Directed Co-occurrence Counting
 For each ordered pair of clusters \((i, j)\), we compute how often an event in cluster \(i\) is followed by at least one event in cluster \(j\) within a time window \(\Delta t\).
-
-Default window:
-- \(\Delta t = 7\) days (`7 * 24 * 3600` seconds)
 
 The counting is **directed** and **greedy**:
 - each target event in cluster \(j\) can be matched at most once
@@ -31,11 +24,9 @@ The counting is **directed** and **greedy**:
 This produces an observed directed co-occurrence matrix.
 
 ## 4. Null Model
-To test significance, we generate surrogate catalogs by randomly permuting event times while keeping the spatial structure and event set fixed.
+To test significance, we generate randomized dataset by randomly permuting event times while keeping the spatial structure and event set fixed.
 
-Default settings:
-- `n_shuffle = 100`
-- optional parallel computation (`n_jobs = 4`)
+- `n_shuffle = 1000`
 
 For each shuffled catalog, the same directed co-occurrence matrix is recomputed, yielding a null distribution for every pair \((i, j)\).
 
@@ -49,8 +40,8 @@ The `+1` correction prevents zero p-values in finite Monte Carlo samples.
 
 ## 6. Graph Construction
 A directed edge \(i \rightarrow j\) is added when both criteria are satisfied:
-- `p_value < 0.05`
-- observed co-occurrence count `>= 5`
+- `p_value < THRESHOLD`
+- observed co-occurrence count `>= THRESHOLD`
 
 Self-loops are removed.  
 The resulting graph is a directed network of clusters, where edges represent temporal associations stronger than expected under randomized timing.

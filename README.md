@@ -15,7 +15,7 @@ HDBSCAN labels outliers as `-1` (noise). These noise points are excluded from in
 - clusters with fewer than `12` events are removed
 
 ## 3. Directed Co-occurrence Counting
-For each ordered pair of clusters \((i, j)\), we compute how often an event in cluster \(i\) is followed by at least one event in cluster \(j\) within a time window \(\Delta t\).
+For each ordered pair of clusters $\((i, j)\)$, we compute how often an event in cluster \(i\) is followed by at least one event in cluster \(j\) within a time window \(\Delta t\).
 
 The counting is **directed** and **greedy**:
 - each target event in cluster \(j\) can be matched at most once

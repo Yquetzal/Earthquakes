@@ -15,31 +15,29 @@ HDBSCAN labels outliers as `-1` (noise). These noise points are excluded from in
 - clusters with fewer than `12` events are removed
 
 ## 3. Directed Co-occurrence Counting
-For each ordered pair of clusters $\((i, j)\)$, we compute how often an event in cluster \(i\) is followed by at least one event in cluster \(j\) within a time window \(\Delta t\).
+For each ordered pair of clusters `(i, j)`, we compute how often an event in cluster `i` is followed by at least one event in cluster `j` within a time window `Δt`.
+
+Default window:
+- `Δt = 7` days (`7 * 24 * 3600` seconds)
 
 The counting is **directed** and **greedy**:
-- each target event in cluster \(j\) can be matched at most once
+- each target event in cluster `j` can be matched at most once
 - this avoids inflating counts from repeated overlaps in dense periods
 
 This produces an observed directed co-occurrence matrix.
 
 ## 4. Null Model
-To test significance, we generate randomized dataset by randomly permuting event times while keeping the spatial structure and event set fixed.
+To test significance, we generate surrogate catalogs by randomly permuting event times while keeping the spatial structure and event set fixed.
 
 - `n_shuffle = 1000`
 
-For each shuffled catalog, the same directed co-occurrence matrix is recomputed, yielding a null distribution for every pair \((i, j)\).
+For each shuffled catalog, the same directed co-occurrence matrix is recomputed, yielding a null distribution for every pair `(i, j)`.
 
 ## 5. Empirical p-values
-For each ordered pair \((i, j)\), an empirical p-value is computed as:
-\[
-p_{ij} = \frac{1 + \#\{C^{null}_{ij} \ge C^{obs}_{ij}\}}{N + 1}
-\]
-where \(N\) is the number of shuffles.  
-The `+1` correction prevents zero p-values in finite Monte Carlo samples.
+For each ordered pair `(i, j)`, an empirical p-value is computed as:
 
-## 6. Graph Construction
-A directed edge \(i \rightarrow j\) is added when both criteria are satisfied:
+```text
+p_ij = (1 + #{C_ij^null >= C_ij^obs}) / (N + 1)A directed edge \(i \rightarrow j\) is added when both criteria are satisfied:
 - `p_value < THRESHOLD`
 - observed co-occurrence count `>= THRESHOLD`
 

@@ -29,9 +29,8 @@ This produces an observed directed co-occurrence matrix.
 ## 4. Null Model
 To test significance, we generate surrogate catalogs by randomly permuting event times while keeping the spatial structure and event set fixed.
 
-Default settings:
-- `n_shuffle = 100`
-- optional parallel computation (`n_jobs = 4`)
+### settings:
+- `n_shuffle = 1000`
 
 For each shuffled catalog, the same directed co-occurrence matrix is recomputed, yielding a null distribution for every pair $(i, j)$.
 
@@ -39,7 +38,7 @@ For each shuffled catalog, the same directed co-occurrence matrix is recomputed,
 For each ordered pair $(i, j)$, an empirical p-value is computed as:
 
 $$
-p_{ij} = \frac{1 + \NB\{C^{\text{null}}_{ij} \ge C^{\text{obs}}_{ij}\}}{N + 1}
+p_{ij} = \frac{1 + |\{C^{\text{null}}_{ij} \ge C^{\text{obs}}_{ij}\}|}{N + 1}
 $$
 
 where $N$ is the number of shuffles.
@@ -48,8 +47,8 @@ The $+1$ correction prevents zero p-values in finite Monte Carlo samples.
 
 ## 6. Graph Construction
 A directed edge $i \rightarrow j$ is added when both criteria are satisfied:
-- `p_value < 0.05`
-- observed co-occurrence count `>= 5`
+- `p_value < THRESHOLD`
+- observed co-occurrence count `>= THRESHOLD`
 
 Self-loops are removed.
 

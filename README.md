@@ -39,7 +39,7 @@ For each shuffled catalog, the same directed co-occurrence matrix is recomputed,
 For each ordered pair $(i, j)$, an empirical p-value is computed as:
 
 $$
-p_{ij} = \frac{1 + \#\{C^{\text{null}}_{ij} \ge C^{\text{obs}}_{ij}\}}{N + 1}
+p_{ij} = \frac{1 + \NB\{C^{\text{null}}_{ij} \ge C^{\text{obs}}_{ij}\}}{N + 1}
 $$
 
 where $N$ is the number of shuffles.
